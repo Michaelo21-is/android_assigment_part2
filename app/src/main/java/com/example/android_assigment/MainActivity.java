@@ -1,8 +1,11 @@
 package com.example.android_assigment;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.google.android.material.textfield.TextInputEditText;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -18,6 +21,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.android_assigment_part2.R;
+
+import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
@@ -35,8 +41,18 @@ public class MainActivity extends AppCompatActivity {
         });
     }
     public void login(){
-        String email = ((EditText) findViewById(R.id.username_fill)).getText().toString();
-        String password = ((EditText) findViewById(R.id.password_fill)).getText().toString();
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+        Fragment loginFragment = null;
+        if (navHostFragment != null && !navHostFragment.getChildFragmentManager().getFragments().isEmpty()) {
+            loginFragment = navHostFragment.getChildFragmentManager().getFragments().get(0);
+        }
+        View fragmentView = loginFragment != null ? loginFragment.getView() : null;
+
+        TextInputEditText emailEdit = fragmentView != null ? fragmentView.findViewById(R.id.username_fill) : null;
+        TextInputEditText passwordEdit = fragmentView != null ? fragmentView.findViewById(R.id.password_fill) : null;
+
+        String email = emailEdit != null && emailEdit.getText() != null ? emailEdit.getText().toString() : "";
+        String password = passwordEdit != null && passwordEdit.getText() != null ? passwordEdit.getText().toString() : "";
 
 
         mAuth.signInWithEmailAndPassword(email, password)
@@ -52,19 +68,32 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
     public void reg() {
-        String email = ((EditText) findViewById(R.id.email_filler)).getText().toString();
-        String password = ((EditText) findViewById(R.id.password_filler)).getText().toString();
-        String username = ((EditText) findViewById(R.id.username_filler)).getText().toString();
-        String firstname = ((EditText) findViewById(R.id.firstname_filler)).getText().toString();
-        String lastname = ((EditText) findViewById(R.id.lastname_filler)).getText().toString();
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+        Fragment signupFragment = null;
+        if (navHostFragment != null && !navHostFragment.getChildFragmentManager().getFragments().isEmpty()) {
+            signupFragment = navHostFragment.getChildFragmentManager().getFragments().get(0);
+        }
+        View fragmentView = signupFragment != null ? signupFragment.getView() : null;
 
-        User user = new User(email, password, username, firstname, lastname);
+        TextInputEditText emailEdit = fragmentView != null ? fragmentView.findViewById(R.id.email_filler) : null;
+        TextInputEditText passwordEdit = fragmentView != null ? fragmentView.findViewById(R.id.password_filler) : null;
+        TextInputEditText usernameEdit = fragmentView != null ? fragmentView.findViewById(R.id.username_filler) : null;
+        TextInputEditText firstnameEdit = fragmentView != null ? fragmentView.findViewById(R.id.firstname_filler) : null;
+        TextInputEditText lastnameEdit = fragmentView != null ? fragmentView.findViewById(R.id.lastname_filler) : null;
+
+        String email = emailEdit != null && emailEdit.getText() != null ? emailEdit.getText().toString() : "";
+        String password = passwordEdit != null && passwordEdit.getText() != null ? passwordEdit.getText().toString() : "";
+        String username = usernameEdit != null && usernameEdit.getText() != null ? usernameEdit.getText().toString() : "";
+        String firstname = firstnameEdit != null && firstnameEdit.getText() != null ? firstnameEdit.getText().toString() : "";
+        String lastname = lastnameEdit != null && lastnameEdit.getText() != null ? lastnameEdit.getText().toString() : "";
+
+        final User user = new User(firstname, lastname, email, password, username);
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            writeData();
+                            writeData(user);
                             Toast.makeText(MainActivity.this, "register success", Toast.LENGTH_LONG).show();
 
                         } else {
@@ -73,15 +102,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
     }
-    public void writeData(){
-        String email = ((EditText) findViewById(R.id.email_filler)).getText().toString();
-        String password = ((EditText) findViewById(R.id.password_filler)).getText().toString();
-        String username = ((EditText) findViewById(R.id.username_filler)).getText().toString();
-        String firstname = ((EditText) findViewById(R.id.firstname_filler)).getText().toString();
-        String lastname = ((EditText) findViewById(R.id.lastname_filler)).getText().toString();
-        User user = new User(firstname,  lastname,  email,  password,  username);
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("users").child(email);
-        myRef.setValue(user);
+    public void writeData(User user){
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        FirebaseDatabase.getInstance().getReference("users").child(uid).setValue(user);
     }
 }

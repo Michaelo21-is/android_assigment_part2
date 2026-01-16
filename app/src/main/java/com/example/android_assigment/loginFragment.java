@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.android_assigment_part2.R;
 
@@ -78,7 +79,11 @@ public class loginFragment extends Fragment {
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Navigation.findNavController(view).navigate(R.id.action_loginFragment_to_signupFragment);
+                try {
+                    Navigation.findNavController(view).navigate(R.id.action_loginFragment_to_signupFragment);
+                } catch (Exception e) {
+                    Toast.makeText(requireContext(), "failed to map to signup fragment", Toast.LENGTH_LONG).show();
+                }
             }
         });
 

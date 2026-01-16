@@ -72,10 +72,8 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 });
-
     }
     public void writeData(){
-        // Write a message to the database
         String email = ((EditText) findViewById(R.id.email_filler)).getText().toString();
         String password = ((EditText) findViewById(R.id.password_filler)).getText().toString();
         String username = ((EditText) findViewById(R.id.username_filler)).getText().toString();

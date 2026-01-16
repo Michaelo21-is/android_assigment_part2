@@ -64,7 +64,7 @@ public class signupFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_signup, container, false);
 
-        Button registerButton = view.findViewById(R.id.signup_button);
+        Button registerButton = view.findViewById(R.id.register_button);
 
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override

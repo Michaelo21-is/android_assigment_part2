@@ -10,13 +10,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -58,20 +58,32 @@ public class MainActivity extends AppCompatActivity {
         String firstname = ((EditText) findViewById(R.id.firstname_filler)).getText().toString();
         String lastname = ((EditText) findViewById(R.id.lastname_filler)).getText().toString();
 
-        User user = new User(email, password, phone, id);
+        User user = new User(email, password, username, firstname, lastname);
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             writeData();
-                            NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
-                            navHostFragment.getNavController().navigate(R.id.action_registerfragment_to_destintionfragment);
+                            Toast.makeText(MainActivity.this, "register success", Toast.LENGTH_LONG).show();
 
                         } else {
                             Toast.makeText(MainActivity.this, "register failed", Toast.LENGTH_LONG).show();
                         }
                     }
                 });
+
+    }
+    public void writeData(){
+        // Write a message to the database
+        String email = ((EditText) findViewById(R.id.email_filler)).getText().toString();
+        String password = ((EditText) findViewById(R.id.password_filler)).getText().toString();
+        String username = ((EditText) findViewById(R.id.username_filler)).getText().toString();
+        String firstname = ((EditText) findViewById(R.id.firstname_filler)).getText().toString();
+        String lastname = ((EditText) findViewById(R.id.lastname_filler)).getText().toString();
+        User user = new User(firstname,  lastname,  email,  password,  username);
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("users").child(email);
+        myRef.setValue(user);
     }
 }

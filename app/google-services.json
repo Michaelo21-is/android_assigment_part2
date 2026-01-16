@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "837009876732",
+    "project_id": "androidassigment-1b7b2",
+    "storage_bucket": "androidassigment-1b7b2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:837009876732:android:5f2833417451cbd564d979",
+        "android_client_info": {
+          "package_name": "com.androidassigment"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAJF3-oobYzftxBISDUgTQBrDv6Dtd7BzM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

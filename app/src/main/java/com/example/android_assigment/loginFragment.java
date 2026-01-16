@@ -1,4 +1,4 @@
-package com.example.authentication_trail;
+package com.example.android_assigment;
 
 import android.os.Bundle;
 
@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.example.android_assigment.MainActivity;
 import com.example.android_assigment.R;
 
 /**
@@ -29,7 +28,7 @@ public class loginFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public loginfragment() {
+    public loginFragment() {
         // Required empty public constructor
     }
 

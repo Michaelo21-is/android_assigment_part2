@@ -1,21 +1,19 @@
-package com.example.authentication_trail;
-
+package com.example.android_assigment;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.example.android_assigment.MainActivity;
-import com.example.android_assigment.R;
+import com.androidassigment.R;
+
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link signUpFragment#newInstance} factory method to
+ * Use the {@link signupFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class signupFragment extends Fragment {

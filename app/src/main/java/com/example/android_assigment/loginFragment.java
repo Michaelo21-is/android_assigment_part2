@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.example.android_assigment.R;
+import com.android_assigment_part2.R;
 
 /**
  * A simple {@link Fragment} subclass.

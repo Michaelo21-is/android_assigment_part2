@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.android_assigment"
+    namespace = "com.android_assigment_part2"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.android_assigment"
+        applicationId = "com.androidassigment"
         minSdk = 24
         targetSdk = 36
         versionCode = 1

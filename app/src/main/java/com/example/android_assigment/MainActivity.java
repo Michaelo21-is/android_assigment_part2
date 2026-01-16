@@ -17,7 +17,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
+import com.android_assigment_part2.R;
 public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;

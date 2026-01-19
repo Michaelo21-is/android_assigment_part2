@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,8 +70,16 @@ public class loginFragment extends Fragment {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MainActivity mainActivity = (MainActivity) getActivity();
-                mainActivity.login();
+                try {
+                    MainActivity mainActivity = (MainActivity) getActivity();
+                    mainActivity.login();
+                    Toast.makeText(requireContext(), "successfully logged in", Toast.LENGTH_LONG).show();
+
+                }
+                catch (Exception e) {
+                    Toast.makeText(requireContext(), "failed to login " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    Log.e("login", e.getMessage());
+                }
             }
         });
 

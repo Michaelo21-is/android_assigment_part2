@@ -5,7 +5,6 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +12,8 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.android_assigment_part2.R;
+import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.FirebaseAuth;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,6 +30,8 @@ public class loginFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private FirebaseAuth mAuth;
 
     public loginFragment() {
         // Required empty public constructor
@@ -59,6 +62,7 @@ public class loginFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        mAuth = FirebaseAuth.getInstance();
     }
 
     @Override
@@ -70,16 +74,7 @@ public class loginFragment extends Fragment {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    MainActivity mainActivity = (MainActivity) getActivity();
-                    mainActivity.login();
-                    Toast.makeText(requireContext(), "successfully logged in", Toast.LENGTH_LONG).show();
-
-                }
-                catch (Exception e) {
-                    Toast.makeText(requireContext(), "failed to login " + e.getMessage(), Toast.LENGTH_LONG).show();
-                    Log.e("login", e.getMessage());
-                }
+                login();
             }
         });
 
@@ -96,5 +91,35 @@ public class loginFragment extends Fragment {
         });
 
         return view;
+    }
+
+    private void login() {
+        View fragmentView = getView();
+        if (fragmentView == null) {
+            return;
+        }
+
+        TextInputLayout emailLayout = fragmentView.findViewById(R.id.username_fill);
+        TextInputLayout passLayout = fragmentView.findViewById(R.id.password_fill);
+
+        String email = "";
+        String password = "";
+
+        if (emailLayout != null && emailLayout.getEditText() != null) {
+            email = emailLayout.getEditText().getText().toString().trim();
+        }
+        if (passLayout != null && passLayout.getEditText() != null) {
+            password = passLayout.getEditText().getText().toString();
+        }
+
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(requireActivity(), task -> {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(requireContext(), "login success", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(requireContext(), "login failed: " +
+                                (task.getException() != null ? task.getException().getMessage() : ""), Toast.LENGTH_LONG).show();
+                    }
+                });
     }
 }

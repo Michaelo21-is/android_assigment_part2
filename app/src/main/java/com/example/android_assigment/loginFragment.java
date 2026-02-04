@@ -1,8 +1,11 @@
 package com.example.android_assigment;
 
+import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
@@ -14,38 +17,20 @@ import android.widget.Toast;
 import com.android_assigment_part2.R;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link loginFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class loginFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
     private FirebaseAuth mAuth;
 
-    public loginFragment() {
-        // Required empty public constructor
-    }
+    public loginFragment() {}
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment loginfragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static loginFragment newInstance(String param1, String param2) {
         loginFragment fragment = new loginFragment();
         Bundle args = new Bundle();
@@ -58,46 +43,68 @@ public class loginFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
         mAuth = FirebaseAuth.getInstance();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         View view = inflater.inflate(R.layout.fragment_login, container, false);
 
         Button loginButton = view.findViewById(R.id.login_button);
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                login();
-            }
-        });
+        loginButton.setOnClickListener(v -> login());
 
         Button registerButton = view.findViewById(R.id.register_button);
-        registerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    Navigation.findNavController(view).navigate(R.id.action_loginFragment_to_signupFragment);
-                } catch (Exception e) {
-                    Toast.makeText(requireContext(), "failed to map to signup fragment", Toast.LENGTH_LONG).show();
-                }
+        registerButton.setOnClickListener(v -> {
+            try {
+                Navigation.findNavController(view).navigate(R.id.action_loginFragment_to_signupFragment);
+            } catch (Exception e) {
+                Toast.makeText(requireContext(), "failed to map to signup fragment", Toast.LENGTH_LONG).show();
             }
         });
 
         return view;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // אם המשתמש כבר מחובר (Firebase שמר את הסשן) → ישר לבית
+        FirebaseUser current = mAuth.getCurrentUser();
+        if (current != null) {
+            String uid = current.getUid();
+
+            // אופציונלי: לשמור uid ב-SharedPreferences (לא חובה, אבל נוח)
+            requireContext()
+                    .getSharedPreferences("session", Context.MODE_PRIVATE)
+                    .edit()
+                    .putString("uid", uid)
+                    .apply();
+
+            View view = getView();
+            if (view != null) {
+                NavController nav = Navigation.findNavController(view);
+
+                // הגנה נגד ניווט כפול
+                if (nav.getCurrentDestination() != null
+                        && nav.getCurrentDestination().getId() == R.id.loginFragment) {
+                    nav.navigate(R.id.action_loginFragment_to_homeFragment);
+                }
+            }
+        }
+    }
+
     private void login() {
         View fragmentView = getView();
-        if (fragmentView == null) {
-            return;
-        }
+        if (fragmentView == null) return;
 
         TextInputLayout emailLayout = fragmentView.findViewById(R.id.username_fill);
         TextInputLayout passLayout = fragmentView.findViewById(R.id.password_fill);
@@ -114,11 +121,33 @@ public class loginFragment extends Fragment {
 
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(requireActivity(), task -> {
+                    if (!isAdded()) return;
+
                     if (task.isSuccessful()) {
-                        Toast.makeText(requireContext(), "login success", Toast.LENGTH_LONG).show();
+                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                        if (user == null) {
+                            Toast.makeText(requireContext(), "login success but user is null", Toast.LENGTH_LONG).show();
+                            return;
+                        }
+
+                        String uid = user.getUid();
+
+                        requireContext()
+                                .getSharedPreferences("session", Context.MODE_PRIVATE)
+                                .edit()
+                                .putString("uid", uid)
+                                .apply();
+
+                        View view = getView();
+                        if (view != null) {
+                            Navigation.findNavController(view)
+                                    .navigate(R.id.action_loginFragment_to_homeFragment);
+                        }
+
                     } else {
-                        Toast.makeText(requireContext(), "login failed: " +
-                                (task.getException() != null ? task.getException().getMessage() : ""), Toast.LENGTH_LONG).show();
+                        Toast.makeText(requireContext(),
+                                "login failed: " + (task.getException() != null ? task.getException().getMessage() : ""),
+                                Toast.LENGTH_LONG).show();
                     }
                 });
     }

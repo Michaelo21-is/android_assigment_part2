@@ -1,8 +1,10 @@
 package com.example.android_assigment;
+
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,20 +20,11 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 
-
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link signupFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class signupFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
@@ -42,15 +35,6 @@ public class signupFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment registerfragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static signupFragment newInstance(String param1, String param2) {
         signupFragment fragment = new signupFragment();
         Bundle args = new Bundle();
@@ -63,10 +47,12 @@ public class signupFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseDatabase.getInstance(
                 "https://androidassigment-1b7b2-default-rtdb.europe-west1.firebasedatabase.app"
@@ -76,10 +62,25 @@ public class signupFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+
         View view = inflater.inflate(R.layout.fragment_signup, container, false);
 
         Button registerButton = view.findViewById(R.id.register_button);
+        Button backButton = view.findViewById(R.id.back_to_login);
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    Navigation.findNavController(v)
+                            .navigate(R.id.action_signupFragment_to_loginFragment);
+                } catch (Exception e) {
+                    Toast.makeText(requireContext(),
+                            "failed to map to login fragment",
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+        });
 
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,9 +94,7 @@ public class signupFragment extends Fragment {
 
     private void reg() {
         View fragmentView = getView();
-        if (fragmentView == null) {
-            return;
-        }
+        if (fragmentView == null) return;
 
         TextInputEditText emailEdit = fragmentView.findViewById(R.id.email_filler);
         TextInputEditText passwordEdit = fragmentView.findViewById(R.id.password_filler);
@@ -103,11 +102,20 @@ public class signupFragment extends Fragment {
         TextInputEditText firstnameEdit = fragmentView.findViewById(R.id.firstname_filler);
         TextInputEditText lastnameEdit = fragmentView.findViewById(R.id.lastname_filler);
 
-        String email = (emailEdit != null && emailEdit.getText() != null) ? emailEdit.getText().toString().trim() : "";
-        String password = (passwordEdit != null && passwordEdit.getText() != null) ? passwordEdit.getText().toString() : "";
-        String username = (usernameEdit != null && usernameEdit.getText() != null) ? usernameEdit.getText().toString().trim() : "";
-        String firstname = (firstnameEdit != null && firstnameEdit.getText() != null) ? firstnameEdit.getText().toString().trim() : "";
-        String lastname = (lastnameEdit != null && lastnameEdit.getText() != null) ? lastnameEdit.getText().toString().trim() : "";
+        String email = (emailEdit != null && emailEdit.getText() != null)
+                ? emailEdit.getText().toString().trim() : "";
+
+        String password = (passwordEdit != null && passwordEdit.getText() != null)
+                ? passwordEdit.getText().toString() : "";
+
+        String username = (usernameEdit != null && usernameEdit.getText() != null)
+                ? usernameEdit.getText().toString().trim() : "";
+
+        String firstname = (firstnameEdit != null && firstnameEdit.getText() != null)
+                ? firstnameEdit.getText().toString().trim() : "";
+
+        String lastname = (lastnameEdit != null && lastnameEdit.getText() != null)
+                ? lastnameEdit.getText().toString().trim() : "";
 
         final User user = new User(firstname, lastname, email, password, username);
 
@@ -119,8 +127,9 @@ public class signupFragment extends Fragment {
                             writeData(user);
                             Toast.makeText(requireContext(), "register success", Toast.LENGTH_LONG).show();
                         } else {
-                            Toast.makeText(requireContext(), "register failed: " +
-                                    (task.getException() != null ? task.getException().getMessage() : ""), Toast.LENGTH_LONG).show();
+                            Toast.makeText(requireContext(),
+                                    "register failed: " + (task.getException() != null ? task.getException().getMessage() : ""),
+                                    Toast.LENGTH_LONG).show();
                         }
                     }
                 });

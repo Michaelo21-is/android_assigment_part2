@@ -12,7 +12,7 @@
         android:orientation="horizontal">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/button"
+            android:id="@+id/add_group_button"
             android:layout_width="48dp"
             android:layout_height="48dp"
             app:backgroundTint="#2563EB"

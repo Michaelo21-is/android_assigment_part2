@@ -5,11 +5,14 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android_assigment_part2.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -47,6 +50,22 @@ public class HomeFragment extends Fragment {
                 .getReference("users")
                 .child(uid)
                 .child("username");
+
+        Button button = view.findViewById(R.id.add_group_button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    Navigation.findNavController(v)
+                            .navigate(R.id.action_homeFragment_to_addGroupFragment);
+
+                } catch (Exception e) {
+                    Toast.makeText(requireContext(),
+                            "failed to map to add group fragment",
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+        });
 
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

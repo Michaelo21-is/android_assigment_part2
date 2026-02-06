@@ -1,11 +1,14 @@
 package com.example.android_assigment;
 
+import java.util.List;
+
 public class User {
     private String name;
     private String lastName;
     private String email;
     private String password;
     private String username;
+    private List<String> friends;
     public User() {}
     public User(String name, String lastName, String email, String password, String username) {
         this.name = name;

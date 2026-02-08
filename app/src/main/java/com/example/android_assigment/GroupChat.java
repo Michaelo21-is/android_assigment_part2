@@ -3,70 +3,55 @@ package com.example.android_assigment;
 import java.util.List;
 
 public class GroupChat {
+
     private GameTopic gameTopic;
-
     private Integer sumOfMember;
-
+    private String groupDescription;
     private String groupName;
-    private List<String> managementId;
 
-    private List<String> membersID;
+    private List<String> managementId; // מי מנהלים (למשל יוצר הקבוצה)
+    private List<String> membersID;    // מי חברים
+    private List<Messege> listOfMesseges;
 
-    private List<Messege> ListOfMesseges;
+    // ✅ חובה ל-Firebase
+    public GroupChat() {}
 
-    public GameTopic getGameTopic() {
-        return gameTopic;
-    }
+    // ✅ קונסטרקטור נוח ליצירה
+    public GroupChat(GameTopic gameTopic,
+                     String groupName,
+                     String groupDescription,
+                     Integer sumOfMember,
+                     List<String> managementId,
+                     List<String> membersID,
+                     List<Messege> listOfMesseges) {
 
-    public void setGameTopic(GameTopic gameTopic) {
         this.gameTopic = gameTopic;
-    }
-
-    public Integer getSumOfMember() {
-        return sumOfMember;
-    }
-
-    public void setSumOfMember(Integer sumOfMember) {
-        this.sumOfMember = sumOfMember;
-    }
-
-    public String getGroupName() {
-        return groupName;
-    }
-
-    public void setGroupName(String groupName) {
         this.groupName = groupName;
-    }
-
-    public List<String> getManagementId() {
-        return managementId;
-    }
-
-    public void setManagementId(List<String> managementId) {
+        this.groupDescription = groupDescription;
+        this.sumOfMember = sumOfMember;
         this.managementId = managementId;
-    }
-
-    public List<String> getMembersID() {
-        return membersID;
-    }
-
-    public void setMembersID(List<String> membersID) {
         this.membersID = membersID;
+        this.listOfMesseges = listOfMesseges;
     }
 
-    public List<Messege> getListOfMesseges() {
-        return ListOfMesseges;
-    }
+    public GameTopic getGameTopic() { return gameTopic; }
+    public void setGameTopic(GameTopic gameTopic) { this.gameTopic = gameTopic; }
 
-    public void setListOfMesseges(List<Messege> listOfMesseges) {
-        ListOfMesseges = listOfMesseges;
-    }
+    public Integer getSumOfMember() { return sumOfMember; }
+    public void setSumOfMember(Integer sumOfMember) { this.sumOfMember = sumOfMember; }
 
-    public GroupChat(GameTopic gameTopic, Integer sumOfMember, String groupName, List<String> membersID, List<Messege> ListOfMesseges) {
-        this.gameTopic = gameTopic;
-        this.sumOfMember = sumOfMember;
-        this.groupName = groupName;
-        this.membersID = membersID;
-        this.ListOfMesseges = ListOfMesseges;
-    }
+    public String getGroupDescription() { return groupDescription; }
+    public void setGroupDescription(String groupDescription) { this.groupDescription = groupDescription; }
+
+    public String getGroupName() { return groupName; }
+    public void setGroupName(String groupName) { this.groupName = groupName; }
+
+    public List<String> getManagementId() { return managementId; }
+    public void setManagementId(List<String> managementId) { this.managementId = managementId; }
+
+    public List<String> getMembersID() { return membersID; }
+    public void setMembersID(List<String> membersID) { this.membersID = membersID; }
+
+    public List<Messege> getListOfMesseges() { return listOfMesseges; }
+    public void setListOfMesseges(List<Messege> listOfMesseges) { this.listOfMesseges = listOfMesseges; }
 }

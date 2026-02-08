@@ -1,5 +1,74 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.example.android_assigment.AddGroupFragment"/>
+    android:layout_height="wrap_content"
+    android:layout_marginTop="80dp"
+    android:orientation="vertical"
+    tools:context="com.example.android_assigment.AddGroupFragment">
+
+    <EditText
+        android:id="@+id/group_name_fill"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
+        android:ems="10"
+        android:inputType="text"
+        android:hint="group name"/>
+
+    <EditText
+        android:id="@+id/group_description_fill"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
+        android:ems="10"
+        android:inputType="text"
+        android:hint="group description" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="game chosen"
+        android:textSize="20sp"
+        android:layout_marginBottom="10dp"/>
+
+    <RadioGroup
+        android:id="@+id/game_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/game_apex"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="apex" />
+
+        <RadioButton
+            android:id="@+id/game_cs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="cs" />
+
+        <RadioButton
+            android:id="@+id/game_fortnite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="fortnite" />
+
+        <RadioButton
+            android:id="@+id/game_fc26"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="fc26" />
+    </RadioGroup>
+
+
+    <Button
+        android:id="@+id/submit_add_group_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="submit " />
+
+</LinearLayout>

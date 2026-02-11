@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
@@ -34,6 +35,12 @@ public class AddGroupFragment extends Fragment {
 
         EditText groupName = root.findViewById(R.id.group_name_fill);
         EditText groupDescription = root.findViewById(R.id.group_description_fill);
+
+        ImageButton goBackBtn = root.findViewById(R.id.go_back_btn_add);
+        goBackBtn.setOnClickListener(v -> {
+                    NavHostFragment.findNavController(AddGroupFragment.this)
+                            .navigate(R.id.action_addGroupFragment_to_homeFragment);
+                });
 
         RadioGroup gameGroup = root.findViewById(R.id.game_group);
         Button submitButton = root.findViewById(R.id.submit_add_group_button);

@@ -15,7 +15,7 @@
             android:id="@+id/firstname_filler"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="שם פרטי" />
+            android:hint="first name" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -26,7 +26,7 @@
             android:id="@+id/lastname_filler"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="שם משפחה" />
+            android:hint="last name" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -37,7 +37,7 @@
             android:id="@+id/email_filler"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="אימייל" />
+            android:hint="email" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -48,13 +48,13 @@
             android:id="@+id/username_filler"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="שם משתמש" />
+            android:hint="user name" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:hint="סיסמא">
+        android:hint="password">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/password_filler"
@@ -68,7 +68,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:backgroundTint="#2196F3"
-        android:text="הרשמה" />
+        android:text="sign up" />
 
     <Button
         android:id="@+id/back_to_login"
@@ -76,6 +76,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:backgroundTint="#2196F3"
-        android:text="חזרה להתחברות" />
+        android:text="sign in" />
 
 </LinearLayout>

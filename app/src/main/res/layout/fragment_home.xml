@@ -21,8 +21,12 @@
             app:backgroundTint="#2563EB"
             app:cornerRadius="14dp"
             app:icon="@drawable/outline_add_24"
-            app:iconGravity="start"
-            app:iconTint="@android:color/white" />
+            app:iconTint="@android:color/white"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp"
+            android:padding="0dp"
+            android:insetLeft="0dp"
+            android:insetRight="0dp"/>
 
         <!-- Spacer -->
         <ImageButton

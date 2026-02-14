@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.view.inputmethod.EditorInfo;
 
 import com.android_assigment_part2.R;
 import com.google.android.material.button.MaterialButton;
@@ -53,6 +54,8 @@ public class MessegeFragment extends Fragment {
 
     private String groupId;
     private String groupName;
+    private String chatId;   // לצ'אט עם חבר
+    private String friendId;
 
     private EditText inputMessageEt;
     private MaterialButton sendBtn;
@@ -91,6 +94,9 @@ public class MessegeFragment extends Fragment {
 
             groupId = getArguments().getString("groupId");
             groupName = getArguments().getString("groupName");
+            chatId = getArguments().getString("chatId");
+            friendId = getArguments().getString("friendId");
+            if (groupName == null) groupName = "חבר";
         }
     }
 
@@ -106,7 +112,7 @@ public class MessegeFragment extends Fragment {
                     .navigate(R.id.action_messegeFragment_to_homeFragment);
         });
         TextView groupNameTv = root.findViewById(R.id.group_name_msg);
-        groupNameTv.setText(groupName);
+        groupNameTv.setText(groupName != null ? groupName : "חבר");
 
         msgRv = root.findViewById(R.id.msg_rv);
         LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext());
@@ -120,11 +126,23 @@ public class MessegeFragment extends Fragment {
         sendBtn = root.findViewById(R.id.send_btn_msg);
 
         sendBtn.setOnClickListener(v -> sendMessage());
+        // שליחת הודעה גם בלחיצת Enter/Send במקלדת (כמו בצ'אט קבוצה)
+        inputMessageEt.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEND) {
+                sendMessage();
+                return true;
+            }
+            return false;
+        });
 
         // טוען את שם המשתמש מה-Realtime Database לפי ה-UID
         loadCurrentUsername();
 
-        loadMessagesForGroup();
+        if (groupId != null) {
+            loadMessagesForGroup();
+        } else if (chatId != null) {
+            loadMessagesForFriend();
+        }
 
         return root;
     }
@@ -172,6 +190,37 @@ public class MessegeFragment extends Fragment {
     }
 
     /**
+     * טוען את הודעות צ'אט עם חבר מ-chatWithFriend/{chatId}/listOfMesseges.
+     */
+    private void loadMessagesForFriend() {
+        if (chatId == null || chatId.trim().isEmpty()) {
+            return;
+        }
+        DatabaseReference messagesRef = FirebaseDatabase.getInstance(DB_URL)
+                .getReference("chatWithFriend")
+                .child(chatId)
+                .child("listOfMesseges");
+
+        messagesRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                messages.clear();
+                for (DataSnapshot msgChild : snapshot.getChildren()) {
+                    Messege m = msgChild.getValue(Messege.class);
+                    if (m != null) messages.add(m);
+                }
+                messegeAdapter.notifyDataSetChanged();
+                if (!messages.isEmpty()) {
+                    msgRv.scrollToPosition(messages.size() - 1);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) { }
+        });
+    }
+
+    /**
      * קריאת ה-username מהטבלה users/{uid}/username ושמירתו במשתנה currentUsername.
      */
     private void loadCurrentUsername() {
@@ -201,10 +250,22 @@ public class MessegeFragment extends Fragment {
     }
 
     /**
-     * שליחת הודעה חדשה לפיירבייס (ריל-טיים) לקבוצה הזאת.
+     * שליחת הודעה חדשה לפיירבייס – לקבוצה או לצ'אט עם חבר.
      */
     private void sendMessage() {
-        if (groupId == null || groupId.trim().isEmpty()) {
+        DatabaseReference messagesRef = null;
+        if (groupId != null && !groupId.trim().isEmpty()) {
+            messagesRef = FirebaseDatabase.getInstance(DB_URL)
+                    .getReference("groupChats")
+                    .child(groupId)
+                    .child("listOfMesseges");
+        } else if (chatId != null && !chatId.trim().isEmpty()) {
+            messagesRef = FirebaseDatabase.getInstance(DB_URL)
+                    .getReference("chatWithFriend")
+                    .child(chatId)
+                    .child("listOfMesseges");
+        }
+        if (messagesRef == null) {
             return;
         }
 
@@ -218,7 +279,6 @@ public class MessegeFragment extends Fragment {
             return;
         }
 
-        // קודם כל נשתמש בשם המשתמש מה-Realtime Database; אם אין, ניפול חזרה לאימייל/UID
         String userNameForMessage = currentUsername;
         if (userNameForMessage == null || userNameForMessage.trim().isEmpty()) {
             userNameForMessage = user.getEmail() != null ? user.getEmail() : user.getUid();
@@ -229,23 +289,13 @@ public class MessegeFragment extends Fragment {
 
         Messege newMsg = new Messege(time, date, userNameForMessage, text);
 
-        DatabaseReference messagesRef = FirebaseDatabase.getInstance(DB_URL)
-                .getReference("groupChats")
-                .child(groupId)
-                .child("listOfMesseges");
-
         String newKey = messagesRef.push().getKey();
         if (newKey == null) {
             return;
         }
 
         messagesRef.child(newKey).setValue(newMsg)
-                .addOnSuccessListener(unused -> {
-                    inputMessageEt.setText("");
-                    // הרשימה תתעדכן אוטומטית דרך ה-ValueEventListener ב-loadMessagesForGroup
-                })
-                .addOnFailureListener(e -> {
-                    // אפשר להציג Toast על כישלון אם תרצה
-                });
+                .addOnSuccessListener(unused -> inputMessageEt.setText(""))
+                .addOnFailureListener(e -> { });
     }
 }

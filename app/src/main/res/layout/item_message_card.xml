@@ -46,7 +46,7 @@
             android:id="@+id/msg_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="12:45"
+            android:text="time"
             android:textSize="12sp"
             android:alpha="0.6"
             app:layout_constraintEnd_toEndOf="parent"

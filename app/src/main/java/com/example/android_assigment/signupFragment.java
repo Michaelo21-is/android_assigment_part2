@@ -126,6 +126,14 @@ public class signupFragment extends Fragment {
                         if (task.isSuccessful()) {
                             writeData(user);
                             Toast.makeText(requireContext(), "register success", Toast.LENGTH_LONG).show();
+                            try {
+                                Navigation.findNavController(getView())
+                                        .navigate(R.id.action_signupFragment_to_loginFragment);
+                            } catch (Exception e) {
+                                Toast.makeText(requireContext(),
+                                        "failed to map to login fragment",
+                                        Toast.LENGTH_LONG).show();
+                            }
                         } else {
                             Toast.makeText(requireContext(),
                                     "register failed: " + (task.getException() != null ? task.getException().getMessage() : ""),

@@ -36,13 +36,20 @@ public class HomeCardAdapter extends RecyclerView.Adapter<HomeCardAdapter.HomeCa
         HomeCard item = items.get(position);
         holder.groupNameTv.setText(item.getGroupName());
         holder.lastMessageTv.setText(item.getLastMessage());
+        String time = item.getTime();
+        holder.timeTv.setText(time != null && !time.isEmpty() ? time : "");
+        holder.timeTv.setVisibility(time != null && !time.isEmpty() ? View.VISIBLE : View.GONE);
 
-        // לחיצה על כל הכרטיס תפתח את מסך ההודעות של הקבוצה
         holder.rootLayout.setOnClickListener(v -> {
             Bundle bundle = new Bundle();
-            bundle.putString("groupId", item.getGroupId());
-            bundle.putString("groupName", item.getGroupName());
-
+            if (item.isGroup()) {
+                bundle.putString("groupId", item.getGroupId());
+                bundle.putString("groupName", item.getGroupName());
+            } else {
+                bundle.putString("chatId", item.getGroupId());
+                bundle.putString("friendId", item.getFriendId());
+                bundle.putString("groupName", item.getGroupName());
+            }
             Navigation.findNavController(v)
                     .navigate(R.id.action_homeFragment_to_messegeFragment, bundle);
         });
@@ -57,12 +64,14 @@ public class HomeCardAdapter extends RecyclerView.Adapter<HomeCardAdapter.HomeCa
 
         TextView groupNameTv;
         TextView lastMessageTv;
+        TextView timeTv;
         LinearLayout rootLayout;
 
         HomeCardViewHolder(@NonNull View itemView) {
             super(itemView);
             groupNameTv = itemView.findViewById(R.id.group_name_tv);
             lastMessageTv = itemView.findViewById(R.id.last_message_tv);
+            timeTv = itemView.findViewById(R.id.home_card_time_tv);
             rootLayout = itemView.findViewById(R.id.home_card_clickable_root);
         }
     }

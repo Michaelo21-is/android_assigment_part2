@@ -31,6 +31,14 @@ public class ChatWithFriend {
         ListOfMesseges = listOfMesseges;
     }
 
+    public String getChatId() {
+        return ChatId;
+    }
+
+    public void setChatId(String chatId) {
+        ChatId = chatId;
+    }
+
     public ChatWithFriend(String friendId, String userId, List<Messege> listOfMesseges) {
         this.friendId = friendId;
         this.userId = userId;

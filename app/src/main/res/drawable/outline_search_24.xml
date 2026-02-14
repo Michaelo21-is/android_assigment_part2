@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- פשוט אייקון זכוכית מגדלת בסיסי -->
+    <path
+        android:fillColor="@android:color/black"
+        android:pathData="M15.5,14h-0.79l-0.28,-0.27
+            c0.98,-1.14 1.57,-2.61 1.57,-4.23
+            C15.99,6.01 13.48,3.5 10.49,3.5
+            C7.51,3.5 5,6.01 5,8.99
+            c0,2.98 2.51,5.49 5.49,5.49
+            c1.62,0 3.09,-0.59 4.23,-1.57l0.27,0.28v0.79
+            L19,18.49L20.49,17L15.5,14z
+            M10.49,13
+            C8.57,13 7,11.43 7,9.51
+            C7,7.59 8.57,6.02 10.49,6.02
+            c1.92,0 3.49,1.57 3.49,3.49
+            C13.98,11.43 12.41,13 10.49,13z" />
+
+</vector>
+

@@ -37,9 +37,9 @@ public class HomeCardAdapter extends RecyclerView.Adapter<HomeCardAdapter.HomeCa
         holder.groupNameTv.setText(item.getGroupName());
         holder.lastMessageTv.setText(item.getLastMessage());
         String time = item.getTime();
-        holder.timeTv.setText(time != null && !time.isEmpty() ? time : "");
+        holder.timeTv.setText(time);
+        // אם אין הודעה אז לא מוצג הזמן
         holder.timeTv.setVisibility(time != null && !time.isEmpty() ? View.VISIBLE : View.GONE);
-
         holder.rootLayout.setOnClickListener(v -> {
             Bundle bundle = new Bundle();
             if (item.isGroup()) {

@@ -160,9 +160,7 @@ public class SearchFragment extends Fragment {
         return null;
     }
 
-    /**
-     * מציג רק קבוצות עם ה-GameTopic שנבחר (בלי משתמשים).
-     */
+    // משמש חיפוש לפי משחק
     private void performSearchByGame(GameTopic selectedTopic) {
         results.clear();
         usersDone = true;
@@ -202,10 +200,7 @@ public class SearchFragment extends Fragment {
         });
     }
 
-    /**
-     * מבצע חיפוש פריפיקס על טבלת המשתמשים (username) ועל טבלת הקבוצות (groupName).
-     * מציג משתמשים וקבוצות יחד אחרי ששתי השאילתות מסתיימות.
-     */
+
     private void performPrefixSearch(String query) {
         if (query.isEmpty()) {
             results.clear();
@@ -276,10 +271,7 @@ public class SearchFragment extends Fragment {
         });
     }
 
-    /**
-     * לחיצה על פלוס: משתמש – יוצר/מעדכן צ'אט בטבלת chatWithFriend;
-     * קבוצה – מוסיף את ה-uid של המשתמש המחובר ל-membersID של הקבוצה.
-     */
+    // בודק אם המתשתמש מחובר ולאחר מכאן בוחר באיזה סוג הוספה להשתמש
     private void onAddSearchItemClicked(SearchItem item) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
@@ -294,8 +286,7 @@ public class SearchFragment extends Fragment {
             addUserToGroup(myUid, item.getId(), item.getDisplayName());
         }
     }
-
-    /** יוצר רשומה בטבלת chatWithFriend אם עדיין אין צ'אט עם החבר */
+    // הוספה לטבלה של צאט וויט פרינדס
     private void addChatWithFriend(String myUid, String friendUid, String friendDisplayName) {
         if (myUid.equals(friendUid)) {
             Toast.makeText(requireContext(), "לא ניתן להוסיף את עצמך", Toast.LENGTH_SHORT).show();
@@ -315,6 +306,7 @@ public class SearchFragment extends Fragment {
                         return;
                     }
                 }
+                // שמירת חבר בטבלה
                 chatRef.orderByChild("userId").equalTo(friendUid).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot2) {
@@ -343,8 +335,7 @@ public class SearchFragment extends Fragment {
             public void onCancelled(@NonNull DatabaseError error) { }
         });
     }
-
-    /** מוסיף את המשתמש המחובר ל-membersID של הקבוצה ומעדכן sumOfMember */
+    // הוספה משתמש לקבוצה
     private void addUserToGroup(String myUid, String groupId, String groupName) {
         DatabaseReference groupRef = FirebaseDatabase.getInstance(DB_URL)
                 .getReference("groupChats").child(groupId);
@@ -388,7 +379,7 @@ public class SearchFragment extends Fragment {
             }
         });
     }
-
+    // הוספת תוכן לאדפטר מעדכן אותו זה לרסייקל ויוו
     private void mergeAndNotify(List<SearchItem> userResults, List<SearchItem> groupResults) {
         if (userResults != null) {
             pendingUsers = userResults;

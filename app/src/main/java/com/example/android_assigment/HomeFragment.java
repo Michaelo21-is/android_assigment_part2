@@ -57,13 +57,13 @@ public class HomeFragment extends Fragment {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
-            usernameTv.setText("אורח");
+            usernameTv.setText("שגיאה בטעינת היוזר ניים");
             return view;
         }
 
         String uid = user.getUid();
         Log.d("HOME", "uid=" + uid);
-
+        // טעינת השם משתמש
         DatabaseReference ref = FirebaseDatabase.getInstance(DB_URL)
                 .getReference("users")
                 .child(uid)
@@ -179,7 +179,6 @@ public class HomeFragment extends Fragment {
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Log.d("HOME", "exists=" + snapshot.exists() + " value=" + snapshot.getValue());
 
                 String name = snapshot.getValue(String.class);
                 if (name == null || name.trim().isEmpty()) {
@@ -235,10 +234,6 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    /**
-     * בודק אם ה-uid של המשתמש נמצא ברשימת החברים (membersID) של הקבוצה.
-     * ב-Firebase רשימה נשמרת כמפה עם מפתחות "0", "1", "2"...
-     */
     private boolean isUserMemberOfGroup(DataSnapshot membersIDSnap, String uid) {
         if (uid == null || uid.isEmpty() || !membersIDSnap.exists()) {
             return false;

@@ -34,7 +34,6 @@ public class AddGroupFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_add_group, container, false);
 
         EditText groupName = root.findViewById(R.id.group_name_fill);
-        EditText groupDescription = root.findViewById(R.id.group_description_fill);
 
         ImageButton goBackBtn = root.findViewById(R.id.go_back_btn_add);
         goBackBtn.setOnClickListener(v -> {
@@ -47,7 +46,6 @@ public class AddGroupFragment extends Fragment {
 
         submitButton.setOnClickListener(v -> {
             String groupNameText = groupName.getText().toString().trim();
-            String groupDescriptionText = groupDescription.getText().toString().trim();
 
             if (groupNameText.isEmpty()) {
                 Toast.makeText(requireContext(), "תכתוב שם קבוצה", Toast.LENGTH_SHORT).show();
@@ -70,13 +68,13 @@ public class AddGroupFragment extends Fragment {
             } else if (selectedId == R.id.game_fc26) {
                 chosenGame = GameTopic.FC26;
             } else {
-                Toast.makeText(requireContext(), "משחק לא מוכר", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "לא נבחר משחק", Toast.LENGTH_SHORT).show();
                 return;
             }
 
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             if (user == null) {
-                Toast.makeText(requireContext(), "אתה לא מחובר", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "יוזר לא מחובר", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -85,7 +83,6 @@ public class AddGroupFragment extends Fragment {
             GroupChat groupChat = new GroupChat(
                     chosenGame,
                     groupNameText,
-                    groupDescriptionText,
                     1,
                     Collections.singletonList(uid),  // managementId
                     Collections.singletonList(uid),  // membersID
@@ -101,7 +98,7 @@ public class AddGroupFragment extends Fragment {
                 Toast.makeText(requireContext(), "שגיאה ביצירת מזהה קבוצה", Toast.LENGTH_SHORT).show();
                 return;
             }
-
+          // הוספת לטבלה של הפייר בייס את העמודה שלו
             groupsRef.child(groupId).setValue(groupChat)
                     .addOnSuccessListener(unused -> {
                         Toast.makeText(requireContext(), "הקבוצה נשמרה", Toast.LENGTH_SHORT).show();
@@ -110,7 +107,7 @@ public class AddGroupFragment extends Fragment {
                         if (isAdded()) {
                             NavHostFragment.findNavController(AddGroupFragment.this)
                                     .navigate(R.id.action_addGroupFragment_to_homeFragment);
-                            // או: .popBackStack(); אם אתה רוצה פשוט לחזור אחורה
+                            // חוזר להום פייג כמו גדול
                         }
                     })
 

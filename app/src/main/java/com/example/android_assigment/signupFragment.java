@@ -66,9 +66,9 @@ public class signupFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_signup, container, false);
 
         Button registerButton = view.findViewById(R.id.register_button);
-        Button backButton = view.findViewById(R.id.back_to_login);
+        Button backToLoginButton = view.findViewById(R.id.back_to_login);
 
-        backButton.setOnClickListener(new View.OnClickListener() {
+        backToLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
@@ -102,20 +102,12 @@ public class signupFragment extends Fragment {
         TextInputEditText firstnameEdit = fragmentView.findViewById(R.id.firstname_filler);
         TextInputEditText lastnameEdit = fragmentView.findViewById(R.id.lastname_filler);
 
-        String email = (emailEdit != null && emailEdit.getText() != null)
-                ? emailEdit.getText().toString().trim() : "";
+        String email = emailEdit.getText().toString().trim();
+        String password = passwordEdit.getText().toString();
+        String username = usernameEdit.getText().toString().trim();
+        String firstname = firstnameEdit.getText().toString().trim();
+        String lastname = lastnameEdit.getText().toString().trim();
 
-        String password = (passwordEdit != null && passwordEdit.getText() != null)
-                ? passwordEdit.getText().toString() : "";
-
-        String username = (usernameEdit != null && usernameEdit.getText() != null)
-                ? usernameEdit.getText().toString().trim() : "";
-
-        String firstname = (firstnameEdit != null && firstnameEdit.getText() != null)
-                ? firstnameEdit.getText().toString().trim() : "";
-
-        String lastname = (lastnameEdit != null && lastnameEdit.getText() != null)
-                ? lastnameEdit.getText().toString().trim() : "";
 
         final User user = new User(firstname, lastname, email, password, username);
 

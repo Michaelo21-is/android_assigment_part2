@@ -25,14 +25,6 @@
         android:hint="group name"
         android:inputType="text" />
 
-    <EditText
-        android:id="@+id/group_description_fill"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="30dp"
-        android:ems="10"
-        android:hint="group description"
-        android:inputType="text" />
 
     <TextView
         android:layout_width="match_parent"

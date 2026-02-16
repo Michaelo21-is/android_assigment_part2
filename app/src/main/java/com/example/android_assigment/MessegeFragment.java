@@ -105,7 +105,7 @@ public class MessegeFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View root = inflater.inflate(R.layout.fragment_messege, container, false);
-
+        //כפתור חזור חזרה
         ImageButton goBackBtn = root.findViewById(R.id.go_back_btn_msg);
         goBackBtn.setOnClickListener(v -> {
             Navigation.findNavController(v)
@@ -117,6 +117,7 @@ public class MessegeFragment extends Fragment {
         msgRv = root.findViewById(R.id.msg_rv);
         LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext());
         // מציג את ההודעות כך שהחדשות למטה ומתחיל מהתחתית (כמו וואטסאפ)
+        // ביצובע הרסייקל ויוו
         layoutManager.setStackFromEnd(true);
         msgRv.setLayoutManager(layoutManager);
         messegeAdapter = new MessegeAdapter(messages);
@@ -164,19 +165,19 @@ public class MessegeFragment extends Fragment {
         groupRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                // נועד כדי שלא יתווצר כפיליות
                 messages.clear();
-
-                // מוסיף לפי סדר ההגעה לפיירבייס (ישן → חדש)
+                // עובר על כל ההודעות של חברים או קבוצות שם אותם במערך של ההודעות ולאחר מכאן מעדכן את האדפטר
                 for (DataSnapshot msgChild : snapshot.getChildren()) {
                     Messege m = msgChild.getValue(Messege.class);
                     if (m != null) {
                         messages.add(m);
                     }
                 }
-
+                // מתריע לאדפטר סיימתי לקרוא מהשרת ותתחיל לעבוד
                 messegeAdapter.notifyDataSetChanged();
 
-                // גלילה לתחתית אחרי טעינה, כך שההודעה החדשה ביותר תהיה מוצגת
+                // גלילה לתחתית העמוד כמו בווטסאפ
                 if (!messages.isEmpty()) {
                     msgRv.scrollToPosition(messages.size() - 1);
                 }
@@ -225,12 +226,9 @@ public class MessegeFragment extends Fragment {
      */
     private void loadCurrentUsername() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user == null) {
-            return;
-        }
-
+        if (user == null) return;
         String uid = user.getUid();
-
+        // טעינת היוזרניים לפי האיידי של השתמש
         DatabaseReference userRef = FirebaseDatabase.getInstance(DB_URL)
                 .getReference("users")
                 .child(uid)
@@ -244,16 +242,13 @@ public class MessegeFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                // במקרה של שגיאה נשאיר את currentUsername ריק ונשתמש בפולבק ב-sendMessage
             }
         });
     }
-
-    /**
-     * שליחת הודעה חדשה לפיירבייס – לקבוצה או לצ'אט עם חבר.
-     */
+    // שליחת הודעה בודק לפני לאיזה סוג של צאט לשלוח
     private void sendMessage() {
         DatabaseReference messagesRef = null;
+        // בודק לאיפה לשים את הרפרנס אם זה לגרופ צאט או לצאט וויט פרינדס
         if (groupId != null && !groupId.trim().isEmpty()) {
             messagesRef = FirebaseDatabase.getInstance(DB_URL)
                     .getReference("groupChats")
@@ -264,9 +259,6 @@ public class MessegeFragment extends Fragment {
                     .getReference("chatWithFriend")
                     .child(chatId)
                     .child("listOfMesseges");
-        }
-        if (messagesRef == null) {
-            return;
         }
 
         String text = inputMessageEt.getText().toString().trim();
@@ -284,16 +276,18 @@ public class MessegeFragment extends Fragment {
             userNameForMessage = user.getEmail() != null ? user.getEmail() : user.getUid();
         }
 
+        // ספרייה של הזמנים
         String time = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date());
         String date = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
 
         Messege newMsg = new Messege(time, date, userNameForMessage, text);
 
+        // יוצר איידי ייחודי להודעה
         String newKey = messagesRef.push().getKey();
         if (newKey == null) {
             return;
         }
-
+        // שומר את הצאט בדטא בייס
         messagesRef.child(newKey).setValue(newMsg)
                 .addOnSuccessListener(unused -> inputMessageEt.setText(""))
                 .addOnFailureListener(e -> { });

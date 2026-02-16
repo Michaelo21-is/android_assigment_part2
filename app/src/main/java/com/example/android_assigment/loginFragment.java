@@ -3,10 +3,10 @@ package com.example.android_assigment;
 import android.content.Context;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -80,24 +80,17 @@ public class loginFragment extends Fragment {
         // אם המשתמש כבר מחובר (Firebase שמר את הסשן) → ישר לבית
         FirebaseUser current = mAuth.getCurrentUser();
         if (current != null) {
-            String uid = current.getUid();
+            try {
+                NavHostFragment navHostFragment =
+                        (NavHostFragment) requireActivity()
+                                .getSupportFragmentManager()
+                                .findFragmentById(R.id.nav_host_fragment);
 
-            // אופציונלי: לשמור uid ב-SharedPreferences (לא חובה, אבל נוח)
-            requireContext()
-                    .getSharedPreferences("session", Context.MODE_PRIVATE)
-                    .edit()
-                    .putString("uid", uid)
-                    .apply();
+                navHostFragment.getNavController()
+                        .navigate(R.id.action_loginFragment_to_homeFragment);
 
-            View view = getView();
-            if (view != null) {
-                NavController nav = Navigation.findNavController(view);
-
-                // הגנה נגד ניווט כפול
-                if (nav.getCurrentDestination() != null
-                        && nav.getCurrentDestination().getId() == R.id.loginFragment) {
-                    nav.navigate(R.id.action_loginFragment_to_homeFragment);
-                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
@@ -112,17 +105,14 @@ public class loginFragment extends Fragment {
         String email = "";
         String password = "";
 
-        if (emailLayout != null && emailLayout.getEditText() != null) {
-            email = emailLayout.getEditText().getText().toString().trim();
-        }
-        if (passLayout != null && passLayout.getEditText() != null) {
-            password = passLayout.getEditText().getText().toString();
-        }
-
+        email = emailLayout.getEditText().getText().toString().trim();
+        password = passLayout.getEditText().getText().toString();
+        // עושה אימות בפייר בייס לגבי אם הנתונים נכונים
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(requireActivity(), task -> {
+                    // בודק אם הפרגמנט קיים עדיין בזיכרון
                     if (!isAdded()) return;
-
+                    // אם הפעולה הצליחה שומרים את הסשן איידי בסטוראז פלוס מנווטים לדף הבית
                     if (task.isSuccessful()) {
                         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                         if (user == null) {
@@ -131,7 +121,6 @@ public class loginFragment extends Fragment {
                         }
 
                         String uid = user.getUid();
-
                         requireContext()
                                 .getSharedPreferences("session", Context.MODE_PRIVATE)
                                 .edit()
@@ -139,10 +128,10 @@ public class loginFragment extends Fragment {
                                 .apply();
 
                         View view = getView();
-                        if (view != null) {
-                            Navigation.findNavController(view)
-                                    .navigate(R.id.action_loginFragment_to_homeFragment);
-                        }
+                        // הגנה מפני קריסה שויוו שווה לנלל
+                        if (view == null) return;
+                        Navigation.findNavController(view)
+                                .navigate(R.id.action_loginFragment_to_homeFragment);
 
                     } else {
                         Toast.makeText(requireContext(),

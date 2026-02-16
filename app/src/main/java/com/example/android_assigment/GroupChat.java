@@ -6,7 +6,6 @@ public class GroupChat {
 
     private GameTopic gameTopic;
     private Integer sumOfMember;
-    private String groupDescription;
     private String groupName;
 
     private List<String> managementId; // מי מנהלים (למשל יוצר הקבוצה)
@@ -19,7 +18,6 @@ public class GroupChat {
     // ✅ קונסטרקטור נוח ליצירה
     public GroupChat(GameTopic gameTopic,
                      String groupName,
-                     String groupDescription,
                      Integer sumOfMember,
                      List<String> managementId,
                      List<String> membersID,
@@ -27,7 +25,6 @@ public class GroupChat {
 
         this.gameTopic = gameTopic;
         this.groupName = groupName;
-        this.groupDescription = groupDescription;
         this.sumOfMember = sumOfMember;
         this.managementId = managementId;
         this.membersID = membersID;
@@ -40,8 +37,6 @@ public class GroupChat {
     public Integer getSumOfMember() { return sumOfMember; }
     public void setSumOfMember(Integer sumOfMember) { this.sumOfMember = sumOfMember; }
 
-    public String getGroupDescription() { return groupDescription; }
-    public void setGroupDescription(String groupDescription) { this.groupDescription = groupDescription; }
 
     public String getGroupName() { return groupName; }
     public void setGroupName(String groupName) { this.groupName = groupName; }

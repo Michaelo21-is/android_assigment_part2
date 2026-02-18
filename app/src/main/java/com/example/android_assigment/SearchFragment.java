@@ -26,6 +26,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -171,24 +172,23 @@ public class SearchFragment extends Fragment {
 
         DatabaseReference groupsRef = FirebaseDatabase.getInstance(DB_URL)
                 .getReference("groupChats");
-        groupsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        // תנאי השאילתה
+        Query q = groupsRef.orderByChild("gameTopic").equalTo(topicName);
+        q.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 List<SearchItem> groupResults = new ArrayList<>();
                 for (DataSnapshot groupSnap : snapshot.getChildren()) {
-                    String gameTopicVal = groupSnap.child("gameTopic").getValue(String.class);
-                    if (topicName.equals(gameTopicVal)) {
-                        String groupName = groupSnap.child("groupName").getValue(String.class);
-                        if (groupName != null) {
-                            String trimmed = groupName.trim();
-                            if (!trimmed.isEmpty()) {
-                                String groupId = groupSnap.getKey();
-                                groupResults.add(new SearchItem(
-                                        SearchItem.Type.GROUP,
-                                        groupId,
-                                        trimmed
-                                ));
-                            }
+                    String groupName = groupSnap.child("groupName").getValue(String.class);
+                    if (groupName != null) {
+                        String trimmed = groupName.trim();
+                        if (!trimmed.isEmpty()) {
+                            String groupId = groupSnap.getKey();
+                            groupResults.add(new SearchItem(
+                                    SearchItem.Type.GROUP,
+                                    groupId,
+                                    trimmed
+                            ));
                         }
                     }
                 }
@@ -201,6 +201,7 @@ public class SearchFragment extends Fragment {
     }
 
 
+    // ביצוע הפריפיקס קודם כל אני עושה ליוזרים ואז לקבוצות
     private void performPrefixSearch(String query) {
         if (query.isEmpty()) {
             results.clear();
@@ -212,15 +213,18 @@ public class SearchFragment extends Fragment {
         results.clear();
         usersDone = false;
         groupsDone = false;
-        final String lowerQuery = query.toLowerCase();
 
         DatabaseReference usersRef = FirebaseDatabase.getInstance(DB_URL)
                 .getReference("users");
         DatabaseReference groupsRef = FirebaseDatabase.getInstance(DB_URL)
                 .getReference("groupChats");
 
-        // טעינת כל המשתמשים ופילטר בצד לקוח (פריפיקס לא תלוי רישיות) – כמו ב-groupName
-        usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        // תנאי השאילתה
+        Query usersPrefixQuery = usersRef.orderByChild("username")
+                .startAt(query)
+                .endAt(query + "\uf8ff");
+
+        usersPrefixQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 List<SearchItem> userResults = new ArrayList<>();
@@ -229,7 +233,6 @@ public class SearchFragment extends Fragment {
                     if (user != null && user.getUsername() != null) {
                         String username = user.getUsername().trim();
                         if (username.isEmpty()) continue;
-                        if (!username.toLowerCase().startsWith(lowerQuery)) continue;
                         String uid = userSnap.getKey();
                         userResults.add(new SearchItem(
                                 SearchItem.Type.USER,
@@ -245,7 +248,13 @@ public class SearchFragment extends Fragment {
             public void onCancelled(@NonNull DatabaseError error) { }
         });
 
-        groupsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        // תנאי השאילתה
+        Query groupsPrefixQuery = groupsRef.orderByChild("groupName")
+                .startAt(query)
+                .endAt(query + "\uf8ff");
+
+        // תעבור פעם אחת ותשלוף את המידע לפי השאילתה שבוצעה
+        groupsPrefixQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 List<SearchItem> groupResults = new ArrayList<>();
@@ -254,7 +263,6 @@ public class SearchFragment extends Fragment {
                     if (groupName != null) {
                         String trimmed = groupName.trim();
                         if (trimmed.isEmpty()) continue;
-                        if (!trimmed.toLowerCase().startsWith(lowerQuery)) continue;
                         String groupId = groupSnap.getKey();
                         groupResults.add(new SearchItem(
                                 SearchItem.Type.GROUP,

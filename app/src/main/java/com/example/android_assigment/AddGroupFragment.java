@@ -31,7 +31,7 @@ public class AddGroupFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View root = inflater.inflate(R.layout.fragment_add_group, container, false);
+        View root = inflater.inflate(R.layout.fragment_add_group, container, false);// לבדוק את זה מחר
 
         EditText groupName = root.findViewById(R.id.group_name_fill);
 
